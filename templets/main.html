@@ -1,0 +1,311 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeployWatch | BLACK//OPS</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+
+<body>
+<div class="app-shell">
+
+    <aside class="sidebar">
+        <div class="brand"><span>◈</span> DEPLOYWATCH</div>
+        <div class="brand-sub">DEPLOYMENT INTELLIGENCE SYSTEM</div>
+
+        <div class="side-rule"></div>
+        <div class="eyebrow">NAVIGATION</div>
+
+        <nav>
+            <button class="nav-item active" data-page="overview">01 &nbsp; Overview</button>
+            <button class="nav-item" data-page="deployments">02 &nbsp; Deployments</button>
+            <button class="nav-item" data-page="analytics">03 &nbsp; Analytics</button>
+            <button class="nav-item" data-page="explorer">04 &nbsp; Data Explorer</button>
+            <button class="nav-item" data-page="reports">05 &nbsp; Reports</button>
+            <button class="nav-item" data-page="monitoring">06 &nbsp; Monitoring</button>
+        </nav>
+
+        <div class="side-rule"></div>
+        <div class="eyebrow">DATA FILTERS</div>
+
+        <label class="field-label">PROJECT</label>
+        <select id="projectFilter"><option value="">ALL PROJECTS</option></select>
+
+        <label class="field-label">ENVIRONMENT</label>
+        <select id="environmentFilter"><option value="">ALL ENVIRONMENTS</option></select>
+
+        <label class="field-label">STATUS</label>
+        <select id="statusFilter"><option value="">ALL STATUSES</option></select>
+
+        <div class="side-bottom">
+            <div class="side-rule"></div>
+            <div class="system-state">● SYSTEM INTERFACE ACTIVE</div>
+            <div class="version">BLACK//OPS / V1.0</div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="topline">
+            <span class="eyebrow">DEPLOYWATCH / DEVOPS INTELLIGENCE</span>
+            <span class="live">● DEMO ENVIRONMENT</span>
+        </div>
+
+        <header class="hero">
+            <div class="hero-tag">DATA-DRIVEN DEPLOYMENT HEALTH ANALYZER / 01</div>
+            <div class="watermark">DW</div>
+            <h1>DEPLOYWATCH<br><span>COMMAND CENTER.</span></h1>
+            <p>Analyze deployment success, investigate failures,<br>
+               and understand software delivery performance.</p>
+            <div class="hero-index">BLACK//OPS / V1.0</div>
+        </header>
+
+        <!-- OVERVIEW -->
+        <section class="page active" id="overview">
+            <div class="section-heading">
+                <div><div class="eyebrow">SYSTEM OVERVIEW</div><h2>Deployment intelligence</h2></div>
+                <span class="section-code">OVERVIEW / 001</span>
+            </div>
+
+            <div class="search-row">
+                <input id="searchInput" placeholder="Search deployment ID or project...">
+                <button class="button dark" id="refreshBtn">↻ REFRESH DATA</button>
+            </div>
+
+            <div class="metrics-grid">
+                <article class="metric"><label>TOTAL DEPLOYMENTS</label><strong id="totalDeployments">—</strong><small>Records in current view</small></article>
+                <article class="metric"><label>SUCCESSFUL</label><strong id="successfulDeployments">—</strong><small>Completed successfully</small></article>
+                <article class="metric"><label>FAILED</label><strong id="failedDeployments">—</strong><small>Require investigation</small></article>
+                <article class="metric"><label>SUCCESS RATE</label><strong id="successRate">—</strong><small>Successful / total</small></article>
+                <article class="metric"><label>AVG. DURATION</label><strong id="avgDuration">—</strong><small>Minutes per deployment</small></article>
+            </div>
+
+            <div class="overview-grid">
+                <article class="panel health-panel">
+                    <div class="eyebrow">DEPLOYMENT HEALTH INDEX</div>
+                    <h3>System health</h3>
+                    <div class="health-content">
+                        <strong id="healthScore">—<small>/100</small></strong>
+                        <span id="riskPill">CALCULATING</span>
+                    </div>
+                    <p>Health score based on current deployment success rate.</p>
+                    <div class="health-line"><span id="healthFill"></span></div>
+                    <div class="health-foot"><span>0 / CRITICAL</span><span>100 / HEALTHY</span></div>
+                </article>
+
+                <article class="panel">
+                    <div class="eyebrow">INTELLIGENCE FEED</div>
+                    <h3>Operational insights</h3>
+                    <div id="insights">Loading insights...</div>
+                </article>
+            </div>
+
+            <article class="panel table-panel">
+                <div class="panel-header">
+                    <div><div class="eyebrow">LATEST ACTIVITY</div><h3>Deployment registry</h3></div>
+                    <button class="text-button" data-goto="deployments">VIEW ALL →</button>
+                </div>
+                <div class="table-scroll">
+                    <table>
+                        <thead><tr>
+                            <th>ID</th><th>PROJECT</th><th>ENVIRONMENT</th>
+                            <th>DURATION</th><th>STATUS</th><th>TESTS</th>
+                            <th>COMMITS</th><th>FILES</th><th>DATE</th>
+                        </tr></thead>
+                        <tbody id="overviewTableBody"></tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <!-- DEPLOYMENTS -->
+        <section class="page" id="deployments">
+            <div class="section-heading"><div><div class="eyebrow">DELIVERY RECORDS</div><h2>Deployment registry</h2></div><span class="section-code">REGISTRY / 002</span></div>
+            <article class="panel table-panel">
+                <div class="panel-header"><h3>All deployment records</h3><span id="deploymentCount">0 RECORDS</span></div>
+                <div class="table-scroll">
+                    <table>
+                        <thead><tr>
+                            <th>ID</th><th>PROJECT</th><th>ENVIRONMENT</th>
+                            <th>DURATION</th><th>STATUS</th><th>TESTS</th>
+                            <th>COMMITS</th><th>FILES</th><th>DATE</th>
+                        </tr></thead>
+                        <tbody id="deploymentTableBody"></tbody>
+                    </table>
+                </div>
+            </article>
+        </section>
+
+        <!-- ANALYTICS -->
+        <section class="page" id="analytics">
+            <div class="section-heading"><div><div class="eyebrow">PERFORMANCE INTELLIGENCE</div><h2>Analytics lab</h2></div><span class="section-code">ANALYTICS / 003</span></div>
+            <div class="analytics-grid">
+                <article class="panel"><div class="eyebrow">DEPLOYMENT OUTCOMES</div><h3>Success vs failure</h3><div class="chart-box"><canvas id="statusChart"></canvas></div></article>
+                <article class="panel"><div class="eyebrow">PROJECT PERFORMANCE</div><h3>Average deployment duration</h3><div class="chart-box"><canvas id="durationChart"></canvas></div></article>
+            </div>
+            <div class="metrics-grid compact">
+                <article class="metric"><label>SUCCESSFUL</label><strong id="analyticsSuccess">—</strong></article>
+                <article class="metric"><label>FAILED</label><strong id="analyticsFailed">—</strong></article>
+                <article class="metric"><label>SUCCESS RATE</label><strong id="analyticsRate">—</strong></article>
+            </div>
+
+<!-- DEPLOYMENT RISK ANALYSIS -->
+<div class="section-heading risk-heading">
+    <div>
+        <div class="eyebrow">AUTOMATED RISK INTELLIGENCE</div>
+        <h2>Risk analysis center</h2>
+    </div>
+    <span class="section-code">RISK ENGINE / 007</span>
+</div>
+
+<div class="risk-summary">
+    <article class="risk-card high">
+        <label>HIGH RISK</label>
+        <strong id="highRiskCount">0</strong>
+        <small>Immediate investigation</small>
+    </article>
+    <article class="risk-card medium">
+        <label>MEDIUM RISK</label>
+        <strong id="mediumRiskCount">0</strong>
+        <small>Needs attention</small>
+    </article>
+    <article class="risk-card low">
+        <label>LOW RISK</label>
+        <strong id="lowRiskCount">0</strong>
+        <small>No major indicators</small>
+    </article>
+</div>
+
+<div class="risk-grid">
+    <article class="panel">
+        <div class="eyebrow">01 / FAILURE PATTERNS</div>
+        <h3>Project failure analysis</h3>
+        <div class="table-scroll">
+            <table>
+                <thead>
+                    <tr>
+                        <th>PROJECT</th>
+                        <th>TOTAL</th>
+                        <th>FAILED</th>
+                        <th>FAILURE RATE</th>
+                        <th>PATTERN</th>
+                    </tr>
+                </thead>
+                <tbody id="failurePatternBody"></tbody>
+            </table>
+        </div>
+    </article>
+
+    <article class="panel">
+        <div class="eyebrow">02 / PERFORMANCE</div>
+        <h3>Slow deployment detection</h3>
+        <div class="performance-stat">
+            <strong id="slowDeploymentCount">0</strong>
+            <span>Slow deployments detected</span>
+        </div>
+        <p id="performanceMessage">
+            Performance analysis will appear here.
+        </p>
+        <div class="eyebrow" id="medianDuration">
+            MEDIAN DURATION: —
+        </div>
+    </article>
+</div>
+
+<article class="panel risk-table-panel">
+    <div class="eyebrow">03 / RISK CLASSIFICATION</div>
+    <h3>Deployment risk registry</h3>
+    <div class="table-scroll">
+        <table>
+            <thead>
+                <tr>
+                    <th>DEPLOYMENT</th>
+                    <th>PROJECT</th>
+                    <th>STATUS</th>
+                    <th>DURATION</th>
+                    <th>RISK SCORE</th>
+                    <th>RISK LEVEL</th>
+                    <th>REASON</th>
+                </tr>
+            </thead>
+            <tbody id="riskTableBody"></tbody>
+        </table>
+    </div>
+</article>
+
+<article class="panel recommendation-panel">
+    <div class="eyebrow">04 / AUTOMATED GUIDANCE</div>
+    <h3>Smart recommendations</h3>
+    <div id="recommendationsList">
+        Loading recommendations...
+    </div>
+</article>
+
+<div class="notice" id="riskAnalysisMessage"></div>
+
+        </section>
+
+        <!-- DATA EXPLORER -->
+        <section class="page" id="explorer">
+            <div class="section-heading"><div><div class="eyebrow">RAW DATA INSPECTION</div><h2>Data explorer</h2></div><span class="section-code">EXPLORER / 004</span></div>
+            <article class="panel table-panel">
+                <div class="panel-header"><h3>Structured deployment data</h3><span id="datasetInfo">—</span></div>
+                <div class="table-scroll">
+                    <table><thead id="explorerTableHead"></thead><tbody id="explorerTableBody"></tbody></table>
+                </div>
+            </article>
+        </section>
+
+        <!-- REPORTS -->
+        <section class="page" id="reports">
+            <div class="section-heading"><div><div class="eyebrow">OUTPUT & EXPORT</div><h2>Reports and export</h2></div><span class="section-code">REPORTS / 005</span></div>
+            <article class="panel report-panel">
+                <div class="eyebrow">CURRENT FILTERED DATASET</div>
+                <h3>Generate deployment report</h3>
+                <p>Export records currently visible under your active filters and search.</p>
+                <div class="report-actions">
+                    <button class="button dark" id="exportCsvBtn">↓ EXPORT CSV</button>
+                    <button class="button light" id="exportHtmlBtn">↓ EXPORT HTML REPORT</button>
+                </div>
+                <div class="notice" id="reportMessage"></div>
+            </article>
+        </section>
+
+        <!-- MONITORING -->
+        <section class="page" id="monitoring">
+            <div class="section-heading"><div><div class="eyebrow">DELIVERY OBSERVABILITY</div><h2>Automated monitoring</h2></div><span class="section-code">MONITOR / 006</span></div>
+            <div class="monitor-grid">
+                <article class="panel">
+                    <div class="eyebrow">DATASET STATUS</div><h3>Monitoring controls</h3>
+                    <p>Refresh and inspect the current deployment dataset.</p>
+                    <button class="button dark" id="checkMonitorBtn">↻ RUN DATASET CHECK</button>
+                    <div class="notice" id="monitorMessage"></div>
+                </article>
+                <article class="panel">
+                    <div class="eyebrow">CUSTOM DATASET</div><h3>Upload deployment CSV</h3>
+                    <p>CSV must contain all required deployment columns.</p>
+                    <form id="uploadForm">
+                        <label class="upload-zone" for="csvFile">＋<b>CHOOSE CSV FILE</b><small>CSV FORMAT</small></label>
+                        <input id="csvFile" type="file" accept=".csv" required>
+                        <button class="button dark" type="submit">UPLOAD & ANALYZE</button>
+                    </form>
+                    <div class="notice" id="uploadMessage"></div>
+                    <button class="text-button" id="resetDatasetBtn">RESTORE DEFAULT DATASET →</button>
+                </article>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <span>DEPLOYWATCH — BLACK//OPS</span>
+            <span>DEPLOYMENT HEALTH ANALYZER</span>
+            <span>V1.0</span>
+        </footer>
+    </main>
+</div>
+<script src="{{ url_for('static', filename='deploy.js') }}"></script>
+</body>
+</html>
