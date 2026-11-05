@@ -1,0 +1,38 @@
+name: DeployWatch CI
+
+on:
+  push:
+    branches: [main, dev]
+  pull_request:
+    branches: [main, dev]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Check Python syntax
+        run: |
+          python -m compileall -q deploy.py analysis.py src
+
+      - name: Check required project files
+        run: |
+          test -f deploy.py
+          test -f requirements.txt
+          test -f templets/main.html
+          test -f templets/static/style.css
+          test -f templets/static/deploy.js
+          test -f data/deployments.csv
