@@ -1,8 +1,29 @@
+# Python environments
 .venv/
+.venv-linux/
+venv/
+
+# Git and Python cache
 .git/
 __pycache__/
 *.pyc
 *.pyo
 *.swp
+
+# Environment and authentication secrets
 .env
+.env.*
+data/.session_secret
+
+# Local authentication database
+data/deploywatch_users.sqlite3
+data/*.sqlite3
+data/*.db
+
+# OS files
 .DS_Store
+Thumbs.db
+
+# Temporary files
+noteooks
+reports

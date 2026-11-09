@@ -1,128 +1,241 @@
-# DeployWatch
+# DeployWatch | Data-Driven Deployment Health Analyzer
 
-**Data-Driven Deployment Health Analyzer** built with Streamlit.
-DeployWatch reads deployment records, scores the health of your delivery
-pipeline, flags risky projects and unusual durations, exports reports and
-monitors a folder for new records.
+**DeployWatch** is a Flask-based deployment intelligence platform that analyzes deployment records, monitors delivery health, identifies deployment risks, and investigates deployment failures.
+
+It provides an interactive web dashboard for exploring deployment metrics, uploading CSV datasets, performing risk analysis, investigating failures, and generating reports.
 
 ## Features
 
-| Page | What it does |
-|------|--------------|
-| **Overview** | KPIs, daily trend, health gauge, automated insight, latest deployments, **Health Score (0-100)** with **Healthy / Warning / Critical** risk and automated insights |
-| **Deployments** | Full deployment registry with CSV export |
-| **Analytics** | Statistical summary, failure trends, risky project ranking, environment failures, unusual duration detection |
-| **Data Explorer** | Dataset records, data quality check, CSV export |
-| **Reports** | Downloadable HTML health report, ZIP package, CSV summary tables, PNG charts |
-| **Monitoring** | Watches `data/incoming/` and merges new CSV files automatically, with alerts and health history |
+### 1. Smart CSV Analyzer
+- Upload deployment datasets through the dashboard.
+- Automatically inspect and analyze available CSV columns.
+- Handle datasets with missing optional metric columns.
+- Dynamically display available data in dashboard tables.
+- Calculate deployment statistics using available records.
+- Validate uploaded datasets before processing.
 
-Sidebar filters (project, environment, status), search and custom CSV upload
-apply across the app.
+### 2. Deployment Forensics
+- Investigate failed deployments.
+- Analyze deployment failure patterns.
+- Display failure counts and failure rates.
+- Examine deployment timelines.
+- Identify probable failure causes.
+- Compare deployment outcomes through forensic analysis.
+
+### 3. Login & Registration
+- Create a DeployWatch account.
+- Sign in using account credentials.
+- Maintain authenticated user sessions.
+- Log out securely through the application interface.
+
+### 4. Deployment Analytics
+- View total, successful, and failed deployments.
+- Calculate deployment success rates.
+- Visualize deployment performance.
+- Analyze deployment durations.
+- Explore deployment risk indicators.
+
+### 5. Deployment Risk Analysis
+- Analyze deployment reliability.
+- Identify risky deployment records.
+- Highlight potential deployment issues.
+- Review risk analysis results through the dashboard.
+
+### 6. Data Explorer
+- Explore deployment records.
+- Inspect available dataset columns.
+- Review deployment information in tabular form.
+
+### 7. Reports & Export
+- Export deployment records as CSV.
+- Generate downloadable HTML analytical reports.
+
+### 8. System Monitoring
+- Upload deployment datasets.
+- Inspect application and analytics status.
+- Access dataset management and monitoring controls.
+
+---
+
+## Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Backend | Python, Flask |
+| Frontend | HTML5, CSS3, JavaScript |
+| Data Analysis | Pandas, NumPy |
+| Visualization | Matplotlib |
+| Database | SQLite |
+| Containerization | Docker, Docker Compose |
+| CI | GitHub Actions |
+| Cloud Deployment | Render |
+| Version Control | Git, GitHub |
+
+**Design System:** BLACK//OPS, using Manrope and Space Mono typography.
+
+---
+
+## Project Structure
+
+```text
+DeployWatch/
+│
+├── .github/
+│   └── workflows/
+│       └── ci.yml
+│
+├── data/
+│   ├── deployments.csv
+│   ├── deployments2.csv
+│   ├── incoming/
+│   ├── backups/
+│   └── processed/
+│
+├── src/
+│   ├── analyze_data.py
+│   ├── inspect_data.py
+│   └── visualize_data.py
+│
+├── templets/
+│   ├── main.html
+│   └── static/
+│       ├── deploy.js
+│       └── style.css
+│
+├── deploy.py
+├── Dockerfile
+├── docker-compose.yml
+├── requirements.txt
+├── .dockerignore
+├── .gitignore
+└── README.md
+```
+
+---
 
 ## Requirements
 
-- Python 3.9 or newer
-- Packages in `requirements.txt`
+- Python 3.12
+- Git
+- Docker (optional, for containerized execution)
 
-## Setup and run
+Dependencies are listed in `requirements.txt`.
+
+## Installation and Local Setup
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/Shakilakhokhar/DeployWatch.git
+cd DeployWatch
+```
+
+### 2. Create a virtual environment
+
+Linux / WSL:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+### 3. Install dependencies
 
 ```bash
 pip install -r requirements.txt
-streamlit run deploy.py
 ```
 
-Run the command from the project folder, because the app reads
-`data/deployments.csv` using a relative path. The app opens at
-http://localhost:8501.
+### 4. Run the application
 
-## Project structure
-
-```
-DeployWatch/
-|-- deploy.py                 # the whole app
-|-- requirements.txt
-|-- README.md
-`-- data/
-    |-- deployments.csv       # main dataset (required)
-    |-- incoming/             # drop new CSV files here (auto-created)
-    |-- processed/            # files that were merged
-    |-- rejected/             # files that failed validation
-    |-- backups/              # dataset backup before every merge
-    `-- monitor_log.csv       # import history used by Monitoring
+```bash
+python deploy.py
 ```
 
-## CSV format
+Open the application in your browser:
 
-Every CSV (main dataset, uploads and incoming files) needs these columns:
+```text
+http://127.0.0.1:5000
+```
 
-| Column | Rule |
-|--------|------|
-| `deployment_id` | Unique ID, for example `DW-1001` |
-| `project` | Project name |
-| `environment` | For example `Production`, `Staging`, `Testing` |
-| `duration_minutes` | Positive number |
-| `status` | Exactly `Success` or `Failed` |
-| `tests_passed` | Number |
-| `commit_count` | Number |
-| `changed_files` | Number |
-| `date` | A valid date, for example `2026-11-02` |
+---
 
-A ready example is in `sample_incoming_batch.csv`.
+## Running with Docker
 
-## How the Health Score works
+DeployWatch supports Docker-based execution.
 
-The score is out of 100 and is calculated in `compute_health()`:
+### Build and start using Docker Compose
 
-| Part | Max points | Based on |
-|------|-----------:|----------|
-| Success rate | 60 | Share of successful deployments |
-| Duration stability | 20 | Share of deployments within 1.5x the median duration |
-| Recent trend | 20 | Success rate of the latest 5 deployments |
+```bash
+docker compose up --build -d
+```
 
-Risk level: **Healthy** 80 and above, **Warning** 60 to 79, **Critical** below 60.
-Change the weights or cutoffs inside `compute_health()` to fit your team.
+### Check running containers
 
-## Automated monitoring
+```bash
+docker compose ps
+```
 
-1. Open the **Monitoring** page.
-2. Turn on **AUTO-MONITOR** (checks every 10 seconds) or press
-   **CHECK INCOMING FOLDER NOW**.
-3. Copy a CSV into `data/incoming/`, or upload one on the same page.
-4. DeployWatch validates the file, skips duplicate `deployment_id` values,
-   merges the new rows into `data/deployments.csv`, refreshes every metric
-   and records alerts (new failures, risk change, score change, rejected
-   files).
+### View application logs
 
-Notes:
+```bash
+docker compose logs -f
+```
 
-- Auto-monitor runs while the Monitoring page is open in the browser.
-- Invalid files are moved to `data/rejected/` and reported as an alert.
-- A custom CSV uploaded from the sidebar replaces the dashboard view until
-  the app is reloaded. Monitoring always updates the main dataset file.
+### Stop the application
 
-## Reports
+```bash
+docker compose down
+```
 
-On the **Reports** page, download:
+The application is accessible at:
 
-- **Health report (HTML)**: open it in a browser and press `Ctrl+P` to save
-  it as a PDF.
-- **Full package (ZIP)**: report, CSV tables and charts together.
-- **CSV tables**: project summary, environment summary, duration outliers,
-  filtered records.
-- **PNG charts**: failure trend, deployment trend, project duration,
-  environment failures, health gauge.
+```text
+http://localhost:5000
+```
 
-## Troubleshooting
+---
 
-| Problem | Fix |
-|---------|-----|
-| `Dataset loading error` | Check that `data/deployments.csv` exists and has all required columns |
-| `streamlit` not recognized | Run `python -m streamlit run deploy.py` |
-| `IndentationError` after editing | Use 4 spaces, never tabs |
-| HTML shows as plain text | Do not put blank lines or 4+ leading spaces inside `st.markdown` HTML |
-| Sidebar arrow missing | Use the latest `deploy.py` (arrow is styled to stay visible) |
+## Continuous Integration
 
-## Tech stack
+DeployWatch uses **GitHub Actions** for continuous integration.
 
-Streamlit, pandas, NumPy, Matplotlib. Design system: BLACK//OPS
-(Manrope and Space Mono fonts).
+The CI workflow:
+
+1. Checks out the repository.
+2. Sets up Python 3.12.
+3. Installs project dependencies.
+4. Checks Python source syntax.
+5. Verifies required application files.
+
+Workflow location:
+
+```text
+.github/workflows/ci.yml
+```
+
+The workflow runs on pushes and pull requests targeting the `main` and `dev` branches.
+
+---
+
+## Cloud Deployment
+
+DeployWatch is configured for Docker-based deployment on **Render**.
+
+- Source: GitHub repository
+- Deployment method: Docker
+- Application entry point: `deploy.py`
+- Port: `5000`
+- Deployment source: `main` branch
+
+Live application:
+
+**https://deploywatch-3mzi.onrender.com/**
+
+When automatic deployment is enabled, new

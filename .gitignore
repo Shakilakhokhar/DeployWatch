@@ -30,3 +30,15 @@ data/failure_trend_*.png
 # Temporary folders
 noteooks/
 reports/
+# WSL virtual environment
+.venv-linux/
+
+# Authentication secrets and local user database
+data/.session_secret
+data/deploywatch_users.sqlite3
+data/*.sqlite3
+data/*.db
+
+# Empty temporary files
+noteooks
+reports
