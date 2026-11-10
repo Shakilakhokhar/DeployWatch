@@ -1,0 +1,11 @@
+deployment_id,project,environment,duration_minutes,status,tests_passed,commit_count,changed_files,date
+D101,Website,Production,4.5,Success,25,3,8,2026-10-20
+D102,Mobile App,Staging,7.2,Failed,18,5,14,2026-10-21
+D103,API Service,Production,3.8,Success,32,2,5,2026-10-22
+D104,Admin Portal,Staging,9.1,Failed,12,7,21,2026-10-23
+D105,Website,Staging,5.0,Success,28,4,9,2026-10-24
+D106,Mobile App,Production,6.7,Success,30,3,11,2026-10-25
+D107,API Service,Staging,8.4,Failed,15,6,17,2026-10-26
+D108,Admin Portal,Production,4.2,Success,27,2,6,2026-10-27
+D109,Website,Production,10.5,Failed,10,8,24,2026-10-28
+D110,Mobile App,Staging,5.6,Success,29,3,10,2026-10-29

@@ -1,6 +1,7 @@
 
 from pathlib import Path
 from functools import wraps
+from flask import send_file
 import os
 import re
 import secrets
@@ -13,7 +14,8 @@ from flask import (
     render_template,
     jsonify,
     request,
-    session
+    session,
+    send_file
 )
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -1284,7 +1286,16 @@ def deployment_forensics():
 # ==================================================
 # ERROR HANDLERS
 # ==================================================
+@app.route("/download-sample")
+def download_sample():
+    sample_path = Path("data/sample_deployments.csv")
 
+    return send_file(
+        sample_path,
+        as_attachment=True,
+        download_name="deploywatch_sample.csv",
+        mimetype="text/csv"
+    )
 @app.errorhandler(413)
 def file_too_large(error):
     return jsonify({
